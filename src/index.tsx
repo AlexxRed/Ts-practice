@@ -4,6 +4,7 @@
 // import "./04-interfaces";
 // import "./05-enums";
 // import "./06-functions";
-import "./07-classes";
+// import "./07-classes";
+import "./my-practice"
 
 export {};
