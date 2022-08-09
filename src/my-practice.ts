@@ -302,5 +302,166 @@ const pizza: Ipizza = new Pizza({ size: "medium", toppings: ["cheese"] });
 console.log(pizza);
 pizza.addTopping("tomato");
 
+////////////////////////////////////////////////////////////////////////////////generic
+
+const reverse = (array: (number[] | string[] | object[])) => {
+    return [...array].reverse();
+};
+
+console.log(reverse([1, 2, 3, 4, 5]));
+
+
+// const reverseOnGeneric = <T>(array: T[]):T[] => {
+//     return [...array].reverse();
+// };
+
+// console.log(reverseOnGeneric<object>([{1:2}, {2:2}, {3:2}]));
+
+const reverseOnGeneric = <T>(array: T[]) => {
+    return [...array].reverse();
+};
+
+console.log(reverseOnGeneric([{ 1: 2 }, { 2: 2 }, { 3: 2 }]));
+
+
+const isEqual = <T, Y>(a: T, b: Y) => {
+    return Object.is(a, b)
+};
+
+console.log(isEqual(3, 3));
+console.log(isEqual("t", "b"));
+console.log((isEqual({ b: 1 }, { b: 1 })));
+
+
+function makeArray <T, B> (x: T, y:B){
+    return[x,y]
+};
+
+console.log(makeArray(1, 6));
+console.log(makeArray('bob', 18));
+
+
+const restOperation = <T, Y>(firstElement: T, ...restelements:Y[]) => {
+    return {firstElement, other:restelements}
+}
+
+
+console.log(restOperation(1, 3, 5, 6, 7, 8));
+
+//////////////////////////////////////////////////////////////////////////////////////Extending generics
+
+// const logLengthArray = <T extends {length:number}>(arr: T) => {
+//     console.log(arr.length);
+// };
+interface Ilength {
+    length:number
+}
+
+const logLengthArray = <T extends Ilength>(arr: T) => {
+    console.log(arr.length);
+}; 
+
+
+
+logLengthArray([1, 2, 3, 4, 8]);
+logLengthArray('232132312313123');
+// logLengthArray(5)
+
+interface Icar {
+    model: string,
+    engine: number|string
+}
+
+const createCarName =<T extends Icar>(car:T) => {
+    return {
+        ...car,
+        characteristics: `Model: ${car.model} engine: ${car.engine}`
+    }
+}
+
+console.log(createCarName({
+    model: "audi",
+    engine: 5.0,
+}));
+
+console.log(createCarName({
+    model: "tesla",
+    engine: "eco engine",
+    price: 20000
+}));
+
+/////////////////////////////////////////////////////////////////////////////generics interface
+
+
+// interface Iuser{
+//     id: number| string
+// };
+
+// const bill:Iuser = { id: 14 };
+// const mayk:Iuser = { id: '234' };
+
+interface User<T>{
+    id: T;
+};
+
+const bill:User<number> = { id: 14 };
+const mayk:User<string> = { id: '234' };
+
+console.log(bill);
+console.log(mayk);
+
+
+interface List<T>{
+    id: string;
+    position: number;
+    active: boolean;
+    content: T;
+};
+
+const firstList:List<string> = {
+    id: '23',
+    position: 2,
+    active: true,
+    content: 'useless'
+}
+
+const secondList:List<string[]> = {
+    id: '23',
+    position: 2,
+    active: true,
+    content: ["useless", "content"]
+}
+console.log(firstList);
+console.log(secondList);
+
+///////////////////////////////////////////////////examples
+
+type TAnimationState = "playing" | "paused";
+type THtppState = "request"|"success"|"error"
+
+const makeState = <S>(initialState:S) => {
+    let state = initialState;
+
+    const getState = () => {
+        return state;
+    };
+
+    const setState = (newState:S) => {
+        state = newState;
+    };
+
+    return { getState, setState };
+
+};
+
+const animationState = makeState<TAnimationState>('playing');
+animationState.setState("paused");
+// animationState.setState("request"); error
+
+const htppState = makeState<THtppState>("success");
+htppState.setState("request");
+htppState.setState("error");
+// htppState.setState("playing"); error
+
 
 export { }
