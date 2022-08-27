@@ -465,3 +465,128 @@ htppState.setState("error");
 
 
 export { }
+
+////////////////////////////////////////////////////////////v
+interface IAuthService {
+  login(): Promise<string>;
+  logout(): Promise<boolean>;
+}
+
+class FacebookAuthSerivce implements IAuthService {
+  login(): Promise<string> {
+    // sdasdasasdasdasdasdasdasdasd
+    return Promise.resolve('23324234234');
+  }
+  logout(): Promise<boolean> {
+    // sdasdasasdasdasdasdasdasdasd
+    return Promise.resolve(true);
+  };
+}
+
+
+class LocalAuthSerivce implements IAuthService {
+  login(): Promise<string> {
+    // sdasdasasdasdasdasdasdasdasd
+    return Promise.resolve('22222222');
+  }
+  logout(): Promise<boolean> {
+    // sdasdasasdasdasdasdasdasdasd
+    return Promise.resolve(true);
+  };
+}
+
+
+interface IHttp {
+  baseUrl: string;
+  url: string;
+  apiVersion: string;
+}
+
+class UserHttpSerivce implements IHttp {
+  baseUrl: string;
+
+  url: string;
+
+  apiVersion: string;
+}
+
+class TodoHttpSerivce implements IHttp {
+  constructor(url: string, baseUrl = 'http://localhost:4200', apiVersion = 'api') {
+    this.baseUrl = baseUrl;
+    this.apiVersion = apiVersion;
+    this.url = url;
+  }
+
+  baseUrl: string;
+
+  url: string;
+
+  apiVersion: string;
+
+  itemName: string;
+
+  getUrl() {
+    return `${this.baseUrl}/${this.apiVersion}/${this.url}`;
+  }
+
+  getUrlId(id: string) {
+    return `${this.getUrl()}/${id}`;
+  }
+
+  async getAll(): Promise<ITodo[]> {
+    const { data } = await axios.get(this.getUrl());
+    return data;
+  }
+
+  async getOne(id: string): Promise<ITodo> {
+    const { data } = await axios.get(this.getUrlId(id));
+    return data;
+  }
+
+  async create(todo: ITodo): Promise<ITodo> {
+    const { data } = await axios.post(this.getUrl(), todo);
+    return data;
+  }
+
+  async update({ id, todo }: UpdateArgs): Promise<ITodo> {
+    const { data } = await axios.put(this.getUrlId(id), todo);
+    return data;
+  }
+
+  async delete(id: string): Promise<void> {
+    await axios.delete(this.getUrlId(id));
+  }
+}
+
+interface UpdateArgs {
+  id: string;
+  todo: ITodo;
+}
+
+const HttpService = new TodoHttpSerivce(QUERY_KEYS.TODOS);
+
+export default HttpService;
+
+
+const createEntityService = (type: string): IHttp => {
+  switch (type) {
+    case 'user':
+      return new UserHttpSerivce(...);
+
+    case 'todo':
+      return new TodoHttpSerivce(...);
+    
+    // ...... 
+  
+    default:
+      break;
+  }
+}
+
+const entityType: 'user'| 'todo' = params.type;
+
+const service: IHttp = createEntityService(entityType)
+
+const serviceBaseUrl = service.getUrlId();
+
+console.log(serviceBaseUrl);
